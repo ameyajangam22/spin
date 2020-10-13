@@ -1,6 +1,6 @@
 <?php
     if (!isset($_POST['username'])) {
-        header("Location: /spin/login/login.php");
+        header("Location: /spin/login/index.php");
         exit();
     }
     // print_r($_POST);
@@ -13,4 +13,3 @@
     if (mysqli_num_rows($result)) {
         echo "exists";
     }
-?>

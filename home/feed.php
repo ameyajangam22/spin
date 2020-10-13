@@ -1,10 +1,10 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
-require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,8 +26,8 @@ require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
 
 <body>
     <?php
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/sidebar.php';
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/navbar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/sidebar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/navbar.php';
     ?>
     <div id="main">
         <div id="postsarea"></div>
@@ -61,7 +61,7 @@ require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
 
             var post_id = event.currentTarget.name;
             // console.log(event.currentTarget.children[1].innerHTML);
-            var like_count=event.currentTarget.children[1]
+            var like_count = event.currentTarget.children[1]
             // console.log('actually '+like_count);
             document.getElementById(post_id).classList.toggle("liked");
             if ($("#" + post_id).hasClass("liked")) {
@@ -81,7 +81,7 @@ require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
                 if (this.status == 200) {
 
                     // console.log(this.responseText);
-                    if (this.responseText=="shaana") {
+                    if (this.responseText == "shaana") {
                         alert("chal hatt lombdi");
                         // console.log(like_count);
                         like_count.innerHTML = parseInt(like_count.innerHTML) - 1

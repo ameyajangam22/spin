@@ -1,10 +1,10 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
-require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 if (isset($_POST['submit'])) {
     $stmt = $conn->prepare("insert into post values( ?, ?, ?, ?)");
     $stmt->bind_param("ssss", $post_id, $user_id, $upload_time, $caption);
@@ -43,7 +43,7 @@ if (isset($_POST['submit'])) {
         exit();
     } else {
         echo "One or more unsupported image type!";
-        $type_error=true;
+        $type_error = true;
     }
     mysqli_close($conn);
     //for viewing images see load.php
@@ -65,44 +65,47 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="upload.css">
     <style>
         .profile_pic {
-            height:25%;
+            height: 25%;
         }
     </style>
 </head>
 
 <body>
     <?php
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/sidebar.php';
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/navbar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/sidebar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/navbar.php';
     ?>
     <div id="main">
-  <div class = 'top'>
+        <div class='top'>
 
-    <!-- <h1 class='title'>S.P.I.N</h1> -->
-    <h3>Sardar Patel Institutional Network</h3>
-    <h1>Make a Post!</h1>
+            <!-- <h1 class='title'>S.P.I.N</h1> -->
+            <h3>Sardar Patel Institutional Network</h3>
+            <h1>Make a Post!</h1>
 
-  </div>
+        </div>
 
-  <div class = 'mid'>
+        <div class='mid'>
 
-    <form action="upload.php" method="post" , enctype="multipart/form-data">
-        <?php
-            echo "Adding posts for ".$_SESSION['username'];
-        ?>
+            <form action="upload.php" method="post" , enctype="multipart/form-data">
+                <?php
+                echo "Adding posts for " . $_SESSION['username'];
+                ?>
 
 
-  </div>
+        </div>
 
         <hr>
         <label for="photo">Select a photo (multiple photos allowed) : </label>
         <input type="file" name="photos[]" id="photo" multiple required>
         <hr>
         <label for="caption">Enter the caption</label>
-        <textarea name="caption" id="caption" cols="30" rows="5" placeholder=" Start typing here..." style="vertical-align: middle;"><?php if(isset($type_error)){echo $_POST["caption"]; unset($type_error);} ?></textarea>
+        <textarea name="caption" id="caption" cols="30" rows="5" placeholder=" Start typing here..." style="vertical-align: middle;"><?php if (isset($type_error)) {
+                                                                                                                                            echo $_POST["caption"];
+                                                                                                                                            unset($type_error);
+                                                                                                                                        } ?></textarea>
         <hr>
         <button class='submit_btn' type='submit' name='submit'> Add Photos</button>
-    </form>
+        </form>
     </div>
     <script>
         var visible = false;

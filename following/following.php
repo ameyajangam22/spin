@@ -1,11 +1,11 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
 $user_id = $_SESSION['user_id'];
-require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,11 +27,11 @@ require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
 
 <body>
     <?php
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/sidebar.php';
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/navbar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/sidebar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/navbar.php';
     ?>
-        <br>
-        <h1>Following</h1>
+    <br>
+    <h1>Following</h1>
     <div id="main">
         <div id="myfollowersarea"></div>
         <div id="loader" class="loader">

@@ -1,17 +1,18 @@
 <?php
-    session_start();
-    if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]) && isset($_GET['user_profile']))) {
-        header("Location: /spin/login/login.php");
-        exit();
-    }
-    if ($_SESSION['user_id']==$_GET['user_profile']) {
-        header ("Location: /spin/home/myposts.php");
-        exit();
-    }
-    require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+session_start();
+if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]) && isset($_GET['user_profile']))) {
+    header("Location: /spin/login/index.php");
+    exit();
+}
+if ($_SESSION['user_id'] == $_GET['user_profile']) {
+    header("Location: /spin/home/myposts.php");
+    exit();
+}
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,112 +26,106 @@
 
     <title>User ID</title>
 </head>
+
 <body>
     <?php
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/sidebar.php';
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/navbar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/sidebar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/navbar.php';
     ?>
     <?php
-        $stmt = $conn->prepare("select * from  user where user_id=?");
-        $stmt->bind_param("s", $user_id);
-        $user_id = $_GET['user_profile'];
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if (mysqli_num_rows($result)) {
-            $row = $result->fetch_assoc();
-            echo '
-                <h1>'.$row['username'].'</h1>
-                <h3>'.$row['firstname'].' '.$row['lastname'].'</h3>
+    $stmt = $conn->prepare("select * from  user where user_id=?");
+    $stmt->bind_param("s", $user_id);
+    $user_id = $_GET['user_profile'];
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if (mysqli_num_rows($result)) {
+        $row = $result->fetch_assoc();
+        echo '
+                <h1>' . $row['username'] . '</h1>
+                <h3>' . $row['firstname'] . ' ' . $row['lastname'] . '</h3>
                 <img src="data:image/jpeg;charset=utf8;base64,' . base64_encode($row['profile_photo']) . '" class="d-block" height=300 />
-                <p>'.$row['bio'].'</p>';
-            $stmt2 = $conn->prepare("select * from  followers where user_id_1 = ? and user_id_2=?");
-            $stmt2->bind_param("ss", $user_id_1, $user_id_2);
-            $user_id_1 = $_SESSION['user_id'];
-            $user_id_2 = $row['user_id'];
-            $stmt2->execute();
-            $result2 = $stmt2->get_result();
-            
-        
-        
-            $stmt4 = $conn->prepare("select * from  follow_requests where user_id_1 = ? and user_id_2=?");
-            $stmt4->bind_param("ss", $user_id_1, $user_id_2);
-            $stmt4->execute();
-            $result4 = $stmt4->get_result();
-            if (mysqli_num_rows($result2))
-            {
-                echo "<button id = 'requestButton' class='requested'>Unfollow</button>";
+                <p>' . $row['bio'] . '</p>';
+        $stmt2 = $conn->prepare("select * from  followers where user_id_1 = ? and user_id_2=?");
+        $stmt2->bind_param("ss", $user_id_1, $user_id_2);
+        $user_id_1 = $_SESSION['user_id'];
+        $user_id_2 = $row['user_id'];
+        $stmt2->execute();
+        $result2 = $stmt2->get_result();
+
+
+
+        $stmt4 = $conn->prepare("select * from  follow_requests where user_id_1 = ? and user_id_2=?");
+        $stmt4->bind_param("ss", $user_id_1, $user_id_2);
+        $stmt4->execute();
+        $result4 = $stmt4->get_result();
+        if (mysqli_num_rows($result2)) {
+            echo "<button id = 'requestButton' class='requested'>Unfollow</button>";
+        } else if (mysqli_num_rows($result4)) {
+            echo "<button id = 'requestButton' class='requested'>Cancel Request</button>";
+        } else {
+            echo "<button id = 'requestButton'>Send Request</button>";
+        }
+        echo "</div>";
+    ?>
+        <script>
+            reload_required = false;
+            if ($('#requestButton').text() == 'Cancel Request' || $('#requestButton').text() == 'Unfollow') {
+                $('#requestButton').css("background-color", "lightgreen")
             }
-            else if (mysqli_num_rows($result4)) {
-                echo "<button id = 'requestButton' class='requested'>Cancel Request</button>";
-            }else {
-                echo "<button id = 'requestButton'>Send Request</button>";
-            }
-            echo "</div>";
-            ?>
-                <script>
-                    reload_required=false;
-                    if ($('#requestButton').text() == 'Cancel Request' || $('#requestButton').text() == 'Unfollow') {
-                        $('#requestButton').css("background-color", "lightgreen")
+            $('#requestButton').click(function() {
+                let params = "code=";
+                if ($(this).text() == 'Cancel Request') {
+                    $(this).css("background-color", "green")
+                    $(this).text("Send Request");
+                    params += "remove"
+                } else if ($(this).text() == 'Send Request') {
+                    $(this).css("background-color", "lightgreen")
+                    $(this).text("Cancel Request");
+                    params += "add"
+                } else {
+                    $(this).css("background-color", "green")
+                    $(this).text("Send Request");
+                    params += "unfollow"
+                    reload_required = true;
+                }
+                params += "&target=" + <?php echo $user_id_2 ?>
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/spin/findusers/managerequests.php", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onload = function() {
+                    if (this.status == 200) {
+                        // console.log(this.responseText);
+                        if (this.responseText == 'open') {
+                            $("#requestButton").css("background-color", "lightgreen")
+                            $("#requestButton").text("Unfollow");
+                        }
                     }
-                    $('#requestButton').click(function(){
-                        let params="code=";
-                        if ($(this).text() == 'Cancel Request') {
-                            $(this).css("background-color", "green")
-                            $(this).text("Send Request");
-                            params+="remove"
-                        }else if ($(this).text() == 'Send Request')
-                        {
-                            $(this).css("background-color", "lightgreen")
-                            $(this).text("Cancel Request");
-                            params+="add"
-                        }
-                        else
-                        {
-                            $(this).css("background-color", "green")
-                            $(this).text("Send Request");
-                            params+="unfollow"
-                            reload_required=true;
-                        }
-                        params+="&target="+<?php echo $user_id_2?>
+                };
+                xhr.send(params);
+                if (reload_required) {
+                    location.reload();
+                }
 
-                        const xhr = new XMLHttpRequest();
-                        xhr.open("POST", "/spin/findusers/managerequests.php", true);
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        xhr.onload = function () {
-                            if (this.status == 200) {
-                                // console.log(this.responseText);
-                                if (this.responseText=='open'){
-                                    $("#requestButton").css("background-color", "lightgreen")
-                                    $("#requestButton").text("Unfollow");
-                                }
-                            }
-                        };
-                        xhr.send(params);
-                        if (reload_required)
-                        {
-                            location.reload();
-                        }
+            });
+        </script>
+    <?php
 
-                    });
-                </script>
-            <?php
-            
-        }
-        else {
-            echo "No such user exists";
-        }
+    } else {
+        echo "No such user exists";
+    }
     ?>
     <?php
-        $stmt9 = $conn->prepare("select * from followers where user_id_1=? and user_id_2=?");
-        $stmt9->bind_param("ss", $user_id_1, $user_id_2);
-        $stmt9->execute();
-        $result9 = $stmt9->get_result();
-        if (mysqli_num_rows($result9) || $row['privacy'] == 'open') {
-            echo "<h1>Posts</h1>";
-            $following=true;
-        }else {
-            $following=false;
-        }
+    $stmt9 = $conn->prepare("select * from followers where user_id_1=? and user_id_2=?");
+    $stmt9->bind_param("ss", $user_id_1, $user_id_2);
+    $stmt9->execute();
+    $result9 = $stmt9->get_result();
+    if (mysqli_num_rows($result9) || $row['privacy'] == 'open') {
+        echo "<h1>Posts</h1>";
+        $following = true;
+    } else {
+        $following = false;
+    }
     ?>
     <div id="main">
         <div id="mypostsarea"></div>
@@ -141,7 +136,7 @@
             <div class="circle"></div>
         </div>
     </div>
-    
+
     <script>
         var visible = false;
 
@@ -165,7 +160,7 @@
 
             var post_id = event.currentTarget.name;
             // console.log(event.currentTarget.children[1].innerHTML);
-            var like_count=event.currentTarget.children[1]
+            var like_count = event.currentTarget.children[1]
             // console.log('actually '+like_count);
             document.getElementById(post_id).classList.toggle("liked");
             if ($("#" + post_id).hasClass("liked")) {
@@ -185,7 +180,7 @@
                 if (this.status == 200) {
 
                     // console.log(this.responseText);
-                    if (this.responseText=="shaana") {
+                    if (this.responseText == "shaana") {
                         alert("chal hatt lombdi");
                         // console.log(like_count);
                         like_count.innerHTML = parseInt(like_count.innerHTML) - 1
@@ -217,12 +212,13 @@
 
         }
     </script>
-    
+
     <?php
-        if ($following) {
-            echo "<script src='userprofile.js'></script>";
-        }
+    if ($following) {
+        echo "<script src='userprofile.js'></script>";
+    }
     ?>
-    
+
 </body>
+
 </html>

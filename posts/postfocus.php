@@ -1,11 +1,11 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
 $user_id = $_SESSION['user_id'];
-require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 $comment_box = '';
 $username_of_post = '';
 ?>
@@ -61,10 +61,10 @@ $username_of_post = '';
     $sql2 = "SELECT image from pictures where post_id='$post_id";
     $res2 = mysqli_query($conn, $sql2);
     ?>
-    
+
     <?php
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/sidebar.php';
-        require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/navbar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/sidebar.php';
+    require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/navbar.php';
     ?>
     <script>
         var visible = false;
@@ -245,7 +245,7 @@ $username_of_post = '';
 
             var post_id = event.currentTarget.name;
             // console.log(event.currentTarget.children[1].innerHTML);
-            var like_count=event.currentTarget.children[1]
+            var like_count = event.currentTarget.children[1]
             // console.log('actually '+like_count);
             document.getElementById(post_id).classList.toggle("liked");
             if ($("#" + post_id).hasClass("liked")) {
@@ -265,7 +265,7 @@ $username_of_post = '';
                 if (this.status == 200) {
 
                     // console.log(this.responseText);
-                    if (this.responseText=="shaana") {
+                    if (this.responseText == "shaana") {
                         alert("chal hatt lombdi");
                         // console.log(like_count);
                         like_count.innerHTML = parseInt(like_count.innerHTML) - 1

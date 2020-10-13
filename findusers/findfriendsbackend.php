@@ -1,7 +1,7 @@
 <?php
     session_start();
     if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]))) {
-        header("Location: /spin/login/login.php");
+        header("Location: /spin/login/index.php");
         exit();
     }
     require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
@@ -23,4 +23,3 @@
         } 
     }
     echo json_encode($tutorialData);
-?>

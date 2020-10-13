@@ -1,16 +1,16 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]) && isset($_POST['start']))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
-require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/spin/partials/dbConnection.php';
 
 
 $start = mysqli_real_escape_string($conn, $_POST['start']);
 $limit = mysqli_real_escape_string($conn, $_POST['limit']);
 $user_id = mysqli_real_escape_string($conn, $_SESSION['user_id']);
-$sql = "SELECT post_id,username,caption from post natural join user where post.user_id in (select user_id_2 from followers where user_id_1 = '".$user_id."') LIMIT $limit OFFSET $start"; //We need to change this query since friends can see their friends posts only
+$sql = "SELECT post_id,username,caption from post natural join user where post.user_id in (select user_id_2 from followers where user_id_1 = '" . $user_id . "') LIMIT $limit OFFSET $start"; //We need to change this query since friends can see their friends posts only
 $result = mysqli_query($conn, $sql);
 $user_id = $_SESSION['user_id'];
 

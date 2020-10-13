@@ -1,6 +1,6 @@
 <?php
     if (!(isset($_POST["username"]) && isset($_POST["password"]))) {
-        header("Location: /spin/login/login.php");
+        header("Location: /spin/login/index.php");
         exit();
     }
     // I've used session variables to store the username on success and error message on failure
@@ -35,4 +35,3 @@
     // Redirect
     header("Location: login.php");
     mysqli_close($conn);
-?>

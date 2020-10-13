@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!(isset($_SESSION["username"]) && isset($_SESSION["user_id"]) && isset($_POST['code']) && isset($_POST['target']))) {
-    header("Location: /spin/login/login.php");
+    header("Location: /spin/login/index.php");
     exit();
 }
 require $_SERVER['DOCUMENT_ROOT'].'/spin/partials/dbConnection.php';
@@ -45,4 +45,3 @@ if ($_POST['code'] == 'add') {
     $stmt->bind_param("ss", $user_id_1, $user_id_2);
     $stmt->execute();
 }
-?>
